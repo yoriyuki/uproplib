@@ -1,0 +1,8 @@
+name="uproplib"
+version="@VERSION@"
+description="Unicode Property Database"
+requires="ucorelib"
+
+archive(byte)="uproplib.cma"
+archive(native)="uproplib.cmxa"
+

@@ -1,0 +1,164 @@
+# Copyright (C) 2001 Jean-Christophe FILLIATRE
+#	        2002, 2003, 2004, 2005, 2006, 2009, 2010, 2011 Yamagata
+#	        Yoriyuki
+# 		2010 Pierre Chambart
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License
+# as published by the Free Software Foundation; either version 2 of
+# the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+# USA
+#
+# You can contact the authour by sending email to
+# yori@users.sourceforge.net
+
+
+# where to install the binaries
+prefix=@prefix@
+
+# other variables set by ./configure
+CPPO = @CPPO@
+FGREP = @FGREP@
+OCAMLC   = ocamlfind ocamlc
+OCAMLOPT = ocamlfind ocamlopt
+OCAMLYACC = @OCAMLYACC@
+OCAMLLEX = @OCAMLLEX@
+OCAMLDEP = @OCAMLDEP@ -slash
+OCAMLLIB = @OCAMLLIB@
+OCAMLBEST= @OCAMLBEST@
+OCAMLVERSION = @OCAMLVERSION@
+CAMLP4O = -pp "@CAMLP4O@ -I $(OCAMLLIB)"
+INSTALL = @OCAMLINSTALL@
+UNINSTALL = un@OCAMLINSTALL@
+OCAMLDOC = @OCAMLDOC@
+OCAMLMKLIB = @OCAMLMKLIB@
+
+# compiler options
+BOPTIONS = @DEBUG@ @ASSERT@
+OOPTIONS = @COPTIONS@ @PROFILE@ @ASSERT@
+
+#
+PACKAGE = uproplib
+VERSION = @VERSION@
+
+###################################################################
+# Build procedure
+###################################################################
+
+.PHONY : all byte opt tools test test.opt autogen install uninstall
+
+
+SUBDIR = -I props -I .
+INCLUDES = $(SUBDIR)
+PACKAGES = -package uucd
+BFLAGS =  $(BOPTIONS) $(INCLUDES) $(PACKAGES)
+OFLAGS =  $(OOPTIONS) $(INCLUDES) $(PACKAGES)
+
+# Generic targets
+#################
+
+all : byte $(OCAMLBEST)
+
+# Properties
+############
+
+PROPSINT = props/uPropAge.mli $(wildcard props/*.mli)
+
+# Build the library
+###################
+
+byte : uproplib.cma
+opt : uproplib.cmxa uproplib.a
+
+OBJECTS = $(PROPSINT:.mli=.cmo)
+OPTOBJECTS = $(OBJECTS:.cmo=.cmx)
+
+uproplib.cma : $(OBJECTS)
+	$(OCAMLC) -a -o uproplib.cma $(OBJECTS)
+uproplib.cmxa : $(OPTOBJECTS)
+	$(OCAMLOPT) -a -o uproplib.cmxa $(OPTOBJECTS)
+
+# Build procedures for tools
+############################
+
+TOOLS = tools/ucdCompiler.$(OCAMLBEST)
+
+tools/ucdCompiler.byte : tools/ucdCompiler.cmo
+	$(OCAMLC) $(BFLAGS) -o $@ $(TOOLSLIB) -linkpkg tools/ucdCompiler.cmo
+
+tools/ucdCompiler.opt : tools/ucdCompiler.cmx
+	$(OCAMLOPT) $(OFLAGS) -o $@ $(OPTTOOLSLIB) -linkpkg tools/ucdCompiler.cmx
+
+# Compile ucd
+###################################################################
+
+autogen : $(PROPSINT) $(PROPSINT:.mli=.ml)
+
+$(PROPSINT) $(PROPSINT:.mli=.ml) : tools/ucdCompiler.$(OCAMLBEST)
+	tools/ucdCompiler.$(OCAMLBEST)
+
+###################################################################
+# Installation and export
+###################################################################
+
+install: install-with-ocamlfind install-data
+
+install-with-ocamlfind:
+	ocamlfind install uproplib META $(PROPSINT) $(PROPSINT:.mli=.cmx) uproplib.cma uproplib.cmxa uproplib.a
+
+uninstall: uninstall-with-ocamlfind
+
+uninstall-with-ocamlfind:
+	ocamlfind remove uproplib
+
+###################################################################
+# Generic rules
+###################################################################
+
+.SUFFIXES: .mli .ml .cmi .cmo .cmx .mll .mly
+
+.mli.cmi:
+	$(OCAMLC) -c $(BFLAGS) $<
+
+.ml.cmo:
+	$(OCAMLC) -c $(BFLAGS) $<
+
+.ml.o:
+	$(OCAMLOPT) -c $(OFLAGS) $<
+
+.ml.cmx:
+	$(OCAMLOPT) -c $(OFLAGS) $<
+
+.mll.ml:
+	$(OCAMLLEX) $<
+
+.mly.ml:
+	$(OCAMLYACC) -v $<
+
+.mly.mli:
+	$(OCAMLYACC) -v $<
+
+###################################################################
+# tags, clean, dist and depend :
+###################################################################
+
+tags :
+	otags */*.ml */*.mli *.ml *.mli
+
+clean :
+	rm -f *.cm[ioxa] *.cmxa *.o *.so *.a */*.cm[iox] */*.o pocaml\
+	*/*.byte */*.opt
+
+distclean : clean
+	rm -f TAGS
+	rm -f config.status
+	rm Makefile META
