@@ -49,15 +49,17 @@ let tbl_mar = Marshal.to_string (tbl : PTbl.t) []
 
 let age_mli_file = open_out "props/uPropAge.mli"
 
-let () = output_string age_mli_file "val age : UCoreLib.UChar.uchar -> [ `Unassigned | `Version of int * int ]\n"
+let () = output_string age_mli_file "type t = [ `Unassigned | `Version of int * int ]\n"
+let () = output_string age_mli_file "val get : UCoreLib.UChar.uchar -> [ `Unassigned | `Version of int * int ]\n"
 
 let () = flush_all ()
 let () = close_out age_mli_file
 
 let age_ml_file = open_out "props/uPropAge.ml"
 
+let () = output_string age_ml_file "type t = [ `Unassigned | `Version of int * int ]\n"
 let () = output_string age_ml_file ("let tbl = Marshal.from_string \"" ^ (String.escaped tbl_mar) ^ "\" 0 \n")
-let () = output_string age_ml_file "let age u = UCoreLib.UCharTbl.get tbl u\n"
+let () = output_string age_ml_file "let get u = UCoreLib.UCharTbl.get tbl u\n"
 
 let () = flush_all ()
 let () = close_out age_ml_file
