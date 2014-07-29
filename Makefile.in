@@ -59,7 +59,7 @@ VERSION = @VERSION@
 
 SUBDIR = -I props -I .
 INCLUDES = $(SUBDIR)
-PACKAGES = -package uucd
+PACKAGES = -package uucd -package ucorelib
 BFLAGS =  $(BOPTIONS) $(INCLUDES) $(PACKAGES)
 OFLAGS =  $(OOPTIONS) $(INCLUDES) $(PACKAGES)
 
@@ -79,12 +79,13 @@ PROPSINT = props/uPropAge.mli $(wildcard props/*.mli)
 byte : uproplib.cma
 opt : uproplib.cmxa uproplib.a
 
+INT = $(PROPSINT:.mli=.cmi)
 OBJECTS = $(PROPSINT:.mli=.cmo)
 OPTOBJECTS = $(OBJECTS:.cmo=.cmx)
 
-uproplib.cma : $(OBJECTS)
+uproplib.cma : $(INT) $(OBJECTS)
 	$(OCAMLC) -a -o uproplib.cma $(OBJECTS)
-uproplib.cmxa : $(OPTOBJECTS)
+uproplib.cmxa : $(INT) $(OPTOBJECTS)
 	$(OCAMLOPT) -a -o uproplib.cmxa $(OPTOBJECTS)
 
 # Build procedures for tools
