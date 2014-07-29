@@ -157,7 +157,7 @@ tags :
 
 clean :
 	rm -f *.cm[ioxa] *.cmxa *.o *.so *.a */*.cm[iox] */*.o pocaml\
-	*/*.byte */*.opt
+	*/*.byte */*.opt props/*.mli props/*.ml
 
 distclean : clean
 	rm -f TAGS
