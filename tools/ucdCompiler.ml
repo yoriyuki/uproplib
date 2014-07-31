@@ -55,37 +55,158 @@ module ProcProp (P : PropSig) = struct
     let tbl_mar = Marshal.to_string (tbl : PTbl.t) [] in
 (*let map_mar = Marshal.to_string !map []*)
 
-    let age_mli_file = open_out ("props/uProp" ^ (String.capitalize P.name) ^ ".mli") in
+    let prop_mli_file = open_out ("props/uProp" ^ P.name ^ ".mli") in
 
-    let () = output_string age_mli_file ("type t = " ^ P.type_name ^ "\n") in
-    let () = output_string age_mli_file ("val get : UCoreLib.UChar.uchar -> " ^ P.type_name  ^ "\n") in
-
-    let () = flush_all () in
-    let () = close_out age_mli_file in
-
-    let age_ml_file = open_out "props/uPropAge.ml" in
-
-    let () = output_string age_ml_file ("type t = " ^ P.type_name ^ "\n") in
-    let () = output_string age_ml_file ("let tbl = Marshal.from_string \"" ^ (String.escaped tbl_mar) ^ "\" 0 \n") in
-    let () = output_string age_ml_file "let get u = UCoreLib.UCharTbl.get tbl u\n" in
+    let () = output_string prop_mli_file ("type t = " ^ P.type_name ^ "\n") in
+    let () = output_string prop_mli_file ("val get : UCoreLib.UChar.uchar -> " ^ P.type_name  ^ "\n") in
 
     let () = flush_all () in
-    let () = close_out age_ml_file in
+    let () = close_out prop_mli_file in
+
+    let prop_ml_file = open_out ("props/uProp" ^ P.name ^ ".ml") in
+
+    let () = output_string prop_ml_file ("type t = " ^ P.type_name ^ "\n") in
+    let () = output_string prop_ml_file ("let tbl = Marshal.from_string \"" ^ (String.escaped tbl_mar) ^ "\" 0 \n") in
+    let () = output_string prop_ml_file "let get u = UCoreLib.UCharTbl.get tbl u\n" in
+
+    let () = flush_all () in
+    let () = close_out prop_ml_file in
+    let () = Printf.printf " done.\n"; flush_all () in
+    ()
+end
+
+module type BoolPropSig = sig
+
+  val property : bool Uucd.prop
+
+  val name : string
+end
+
+module ProcBoolProp (P : BoolPropSig) = struct
+
+  let run () =
+    let () = (Printf.printf "Processing %s....." P.name); flush_all () in
+
+    let set = ref USet.empty in
+	
+    let () = for i = 0 to 0x10ffff do
+      if not (Uucd.is_scalar_value i) then () else begin
+	match Uucd.cp_prop ucd i P.property with
+	  Some true -> set  := USet.add (UChar.of_int_exn i) !set
+	| _ -> ()
+      end
+    done in
+
+    let tbl = UCharTbl.Bool.of_set !set in
+
+    let tbl_mar = Marshal.to_string (tbl : UCharTbl.Bool.t) [] in
+(*let map_mar = Marshal.to_string !map []*)
+
+    let prop_mli_file = open_out ("props/uProp" ^ P.name ^ ".mli") in
+
+    let () = output_string prop_mli_file ("val get : UCoreLib.UChar.uchar -> bool \n") in
+
+    let () = flush_all () in
+    let () = close_out prop_mli_file in
+
+    let prop_ml_file = open_out ("props/uProp" ^ P.name ^ ".ml") in
+
+    let () = output_string prop_ml_file ("let tbl = Marshal.from_string \"" ^ (String.escaped tbl_mar) ^ "\" 0 \n") in
+    let () = output_string prop_ml_file "let get u = UCoreLib.UCharTbl.get tbl u\n" in
+
+    let () = flush_all () in
+    let () = close_out prop_ml_file in
     let () = Printf.printf " done.\n"; flush_all () in
     ()
 end
 
 (* age *)
 
-module AgeSig = struct 
+module AgeStr = struct 
   type t = [ `Unassigned | `Version of int * int ]
 
   let property = Uucd.age
   let default = `Unassigned
-  let name = "age"
+  let name = "Age"
   let type_name = "[ `Unassigned | `Version of int * int ]"
 end
 
-module Age = ProcProp(AgeSig)
+module Age = ProcProp(AgeStr)
 
 let () = Age.run ()
+
+(* alphabetic *)
+module AlphabeticStr = struct
+  let property = Uucd.alphabetic
+  let name = "Alphabetic"
+end
+
+module Alphabetic = ProcBoolProp(AlphabeticStr)
+let () = Alphabetic.run ()
+
+(* ascii_hex_digit *)
+module AsciiHexDigitStr = struct
+  let property = Uucd.ascii_hex_digit
+  let name = "AsciiHexDigit"
+end
+
+module AsciiHexDigit = ProcBoolProp(AsciiHexDigitStr)
+let () = AsciiHexDigit.run ()
+
+(* bidi_class *)
+module BidiClassStr = struct 
+  type t = [ `AL
+       | `AN
+       | `B
+       | `BN
+       | `CS
+       | `EN
+       | `ES
+       | `ET
+       | `FSI
+       | `L
+       | `LRE
+       | `LRI
+       | `LRO
+       | `NSM
+       | `ON
+       | `PDF
+       | `PDI
+       | `R
+       | `RLE
+       | `RLI
+       | `RLO
+       | `S
+       | `WS ]
+
+  let property = Uucd.bidi_class
+  let default = `BN
+  let name = "BidiClass"
+  let type_name = "[ `AL
+       | `AN
+       | `B
+       | `BN
+       | `CS
+       | `EN
+       | `ES
+       | `ET
+       | `FSI
+       | `L
+       | `LRE
+       | `LRI
+       | `LRO
+       | `NSM
+       | `ON
+       | `PDF
+       | `PDI
+       | `R
+       | `RLE
+       | `RLI
+       | `RLO
+       | `S
+       | `WS ]"
+end
+
+module BidiClass = ProcProp(BidiClassStr)
+
+let () = BidiClass.run ()

@@ -71,7 +71,8 @@ all : byte $(OCAMLBEST)
 # Properties
 ############
 
-PROPSINT = props/uPropAge.mli $(wildcard props/*.mli)
+PROPSINT = props/uPropAge.mli props/uPropAlphabetic.mli props/uPropAsciiHexDigit.mli \
+	props/uPropBidiClass.mli
 
 # Build the library
 ###################
