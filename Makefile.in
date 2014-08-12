@@ -72,7 +72,9 @@ all : byte $(OCAMLBEST)
 ############
 
 PROPSINT = props/uPropAge.mli props/uPropAlphabetic.mli props/uPropAsciiHexDigit.mli \
-	props/uPropBidiClass.mli
+	props/uPropBidiClass.mli props/uPropBidiControl.mli props/uPropBidiMirrored.mli \
+	Props/uPropBidiMirroringGlyph.mli Props/uPropBidiPairedBracket.mli \
+	Props/uPropBidiPairedBracketType.mli Props/uPropBlock.mli
 
 # Build the library
 ###################
