@@ -17,17 +17,17 @@ let ucd = get_ucd "ucd/ucd.all.grouped.xml"
 
 let () = Printf.printf " done.\n"; flush_all ()
 
-module type PropSig = sig
+module type PropComplexSig = sig
   type t
 
   val property : t Uucd.prop
-  val default : t
+  val default_value : Uucd.cp -> t
 
   val name : string
   val type_name : string
 end
 
-module ProcProp (P : PropSig) = struct
+module ProcComplexProp (P : PropComplexSig) = struct
   module PHash = struct
     type t = P.t
     let equal :  P.t -> P.t -> bool = (=)
@@ -46,11 +46,13 @@ module ProcProp (P : PropSig) = struct
 	match Uucd.cp_prop ucd i P.property with
 	  Some p -> 
 	    map := UMap.add (UChar.of_int_exn i) p !map
-	| None -> ()
+	| None -> 
+	    if P.default_value i == P.default_value 0 then () else
+	    map := UMap.add (UChar.of_int_exn i) (P.default_value i) !map
       end
     done in
 
-    let tbl = PTbl.of_map P.default !map in
+    let tbl = PTbl.of_map (P.default_value 0) !map in
 
     let tbl_mar = Marshal.to_string (tbl : PTbl.t) [] in
 (*let map_mar = Marshal.to_string !map []*)
@@ -73,6 +75,25 @@ module ProcProp (P : PropSig) = struct
     let () = close_out prop_ml_file in
     let () = Printf.printf " done.\n"; flush_all () in
     ()
+end
+
+module type PropSig = sig
+  type t
+
+  val property : t Uucd.prop
+  val default : t
+
+  val name : string
+  val type_name : string
+end
+
+module ProcProp (P : PropSig) = struct
+  module PComplex = struct 
+    include P
+    let default_value _ = default
+  end
+
+  include ProcComplexProp(PComplex)
 end
 
 module type BoolPropSig = sig
@@ -180,7 +201,26 @@ module BidiClassStr = struct
        | `WS ]
 
   let property = Uucd.bidi_class
-  let default = `BN
+
+  let default_value cp =
+    if cp >= 0x0600 && cp <= 0x07bf
+  || cp >= 0x08A0 && cp <= 0x08FF 
+  || cp >= 0xFB50 && cp <= 0xFDCF
+  || cp >= 0xFDF0 && cp <= 0xFDFF
+  || cp >= 0xFE70 && cp <= 0xFEFF
+  || cp >= 0x0001EE00 && cp <= 0x0001EEFF then `AL else
+      if cp >= 0x0590 && cp <= 0x05FF
+  || cp >= 0x07C0 && cp <= 0x089F
+  || cp >= 0xFB1D && cp <= 0xFB4F
+  || cp >= 0x00010800 && cp <= 0x00010FFF
+  || cp >= 0x0001E800 && cp <= 0x0001EDFF
+  || cp >= 0x0001EF00 && cp <= 0x0001EFFF then `R else
+	if cp >= 0x20A0 && cp <= 0x20CF then `ET else
+	match Uucd.cp_prop ucd cp Uucd.default_ignorable_code_point,
+	  Uucd.cp_prop ucd cp Uucd.noncharacter_code_point with
+	  Some true, _ | _,  Some true -> `BN
+	  | _ -> `L
+	
   let name = "BidiClass"
   let type_name = "[ `AL
        | `AN
@@ -207,7 +247,7 @@ module BidiClassStr = struct
        | `WS ]"
 end
 
-module BidiClass = ProcProp(BidiClassStr)
+module BidiClass = ProcComplexProp(BidiClassStr)
 
 let () = BidiClass.run ()
 
@@ -827,7 +867,7 @@ module CaseFoldingStr = struct
 
   let property = Uucd.case_folding 
   let default = `Self
-  let name = "CaseFolding "
+  let name = "CaseFolding"
   let type_name = "[`Cps of int list | `Self]"
 end
 
@@ -853,7 +893,7 @@ module ChangesWhenCasefoldedStr = struct
 end
 
 module ChangesWhenCasefolded = ProcBoolProp(ChangesWhenCasefoldedStr)
-let () = CaseIgnorable.run ()
+let () = ChangesWhenCasefolded.run ()
 
 (* changes_when_casemapped *)
 
@@ -924,3 +964,164 @@ end
 
 module Dash = ProcBoolProp(DashStr)
 let () = Dash.run ()
+
+(* decomposition_mapping *)
+
+module DecompositionMappingStr = struct 
+  type t = [ `Cps of int list | `Self ]
+
+  let property = Uucd.decomposition_mapping 
+  let default = `Self
+  let name = "DecompositionMapping"
+  let type_name = "[`Cps of int list | `Self]"
+end
+
+module DecompositionMapping = ProcProp(DecompositionMappingStr)
+
+let () = DecompositionMapping.run ()
+
+(* decomposition_type *)
+
+module DecompositionTypeStr = struct 
+  type t = [ `Can
+       | `Com
+       | `Enc
+       | `Fin
+       | `Font
+       | `Fra
+       | `Init
+       | `Iso
+       | `Med
+       | `Nar
+       | `Nb
+       | `None
+       | `Sml
+       | `Sqr
+       | `Sub
+       | `Sup
+       | `Vert
+       | `Wide ] 
+
+  let property = Uucd.decomposition_type
+  let default = `None
+  let name = "DecompositionType"
+  let type_name = "[ `Can
+       | `Com
+       | `Enc
+       | `Fin
+       | `Font
+       | `Fra
+       | `Init
+       | `Iso
+       | `Med
+       | `Nar
+       | `Nb
+       | `None
+       | `Sml
+       | `Sqr
+       | `Sub
+       | `Sup
+       | `Vert
+       | `Wide ]"
+end
+
+module DecompositionType = ProcProp(DecompositionTypeStr)
+
+let () = DecompositionType.run ()
+
+(* default_ignorable_code_point *)
+
+module DefaultIgnorableCodePointStr = struct
+  let property = Uucd.default_ignorable_code_point
+  let name = "DefaultIgnorableCodePoint"
+end
+
+module DefaultIgnorableCodePoint = ProcBoolProp(DefaultIgnorableCodePointStr)
+let () = DefaultIgnorableCodePoint.run ()
+
+(* deprecated *)
+
+module DeprecatedStr = struct
+  let property = Uucd.deprecated
+  let name = "Deprecated"
+end
+
+module Deprecated = ProcBoolProp(DeprecatedStr)
+let () = Deprecated.run ()
+
+(* diacritic *)
+
+module DiacriticStr = struct
+  let property = Uucd.diacritic
+  let name = "Diacritic"
+end
+
+module Diacritic = ProcBoolProp(DiacriticStr)
+let () = Diacritic.run ()
+
+(* east_asian_width *)
+
+let is_private cp =
+  cp >= 0xe000 && cp <= 0xf8ff 
+|| cp >= 0xf0000 && cp <= 0xffffd
+|| cp >= 0x100000 && cp <= 0x10fffd
+
+module EastAsianWidthStr = struct 
+  type t = [ `A | `F | `H | `N | `Na | `W ]  
+
+  let property = Uucd.east_asian_width
+
+  let default_value cp =
+    if is_private cp then `A else
+    if cp >= 0x4e00 && cp <= 0x9fff
+    || cp >= 0x3400 && cp <= 0x4dbf
+    || cp >= 0xf900 && cp <= 0xfaff
+    || cp >= 0x20000 && cp <= 0x2ffff
+    || cp >= 0x30000 && cp <= 0x3ffff then `W else `N      
+
+  let name = "EastAsianWidth"
+  let type_name = "[ `A | `F | `H | `N | `Na | `W ]"
+end
+
+module EastAsianWidth = ProcComplexProp(EastAsianWidthStr)
+let () = EastAsianWidth.run ()
+
+module ExpandsOnNFCStr = struct
+  let property = Uucd.expands_on_nfc
+  let name = "ExpandsOnNFC"
+end
+
+module ExpandsOnNFC = ProcBoolProp(ExpandsOnNFCStr)
+let () = ExpandsOnNFC.run ()
+
+module ExpandsOnNFDStr = struct
+  let property = Uucd.expands_on_nfd
+  let name = "ExpandsOnNFD"
+end
+
+module ExpandsOnNFD = ProcBoolProp(ExpandsOnNFDStr)
+let () = ExpandsOnNFD.run ()
+
+module ExpandsOnNFKCStr = struct
+  let property = Uucd.expands_on_nfkc
+  let name = "ExpandsOnNFKC"
+end
+
+module ExpandsOnNFKC = ProcBoolProp(ExpandsOnNFKCStr)
+let () = ExpandsOnNFKC.run ()
+
+module ExpandsOnNFKDStr = struct
+  let property = Uucd.expands_on_nfkd
+  let name = "ExpandsOnNFKD"
+end
+
+module ExpandsOnNFKD = ProcBoolProp(ExpandsOnNFKDStr)
+let () = ExpandsOnNFKD.run ()
+
+module ExtenderStr = struct
+  let property = Uucd.extender
+  let name = "Extender"
+end
+
+module Extender = ProcBoolProp(ExtenderStr)
+let () = Extender.run ()
