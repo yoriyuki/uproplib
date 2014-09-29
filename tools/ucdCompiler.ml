@@ -289,12 +289,12 @@ let () = BidiMirroringGlyph.run ()
 (* bidi_paired_bracket *) 
 
 module BidiPairedBracketStr = struct 
-  type t = [ `Cp of int | `Self ]
+  type t = [ `Cp of Uucd.cp | `Self ]
 
   let property = Uucd.bidi_paired_bracket
   let default = `Self
   let name = "BidiPairedBracket"
-  let type_name = "[ `Cp of int | `Self ]"
+  let type_name = "[ `Cp of Uucd.cp | `Self ]"
 end
 
 module BidiPairedBracket = ProcProp(BidiPairedBracketStr)
@@ -863,12 +863,12 @@ let () = Cased.run ()
 (* case_folding *)
 
 module CaseFoldingStr = struct 
-  type t = [ `Cps of int list | `Self ]
+  type t = [ `Cps of Uucd.cp list | `Self ]
 
   let property = Uucd.case_folding 
   let default = `Self
   let name = "CaseFolding"
-  let type_name = "[`Cps of int list | `Self]"
+  let type_name = "[`Cps of Uucd.cp list | `Self]"
 end
 
 module CaseFolding = ProcProp(CaseFoldingStr)
@@ -968,12 +968,12 @@ let () = Dash.run ()
 (* decomposition_mapping *)
 
 module DecompositionMappingStr = struct 
-  type t = [ `Cps of int list | `Self ]
+  type t = [ `Cps of Uucd.cp list | `Self ]
 
   let property = Uucd.decomposition_mapping 
   let default = `Self
   let name = "DecompositionMapping"
-  let type_name = "[`Cps of int list | `Self]"
+  let type_name = "[`Cps of Uucd.cp list | `Self]"
 end
 
 module DecompositionMapping = ProcProp(DecompositionMappingStr)
@@ -1125,3 +1125,184 @@ end
 
 module Extender = ProcBoolProp(ExtenderStr)
 let () = Extender.run ()
+
+module FcNFKCClosureStr = struct
+  type t = [ `Cps of Uucd.cp list | `Self ]
+
+  let property = Uucd.fc_nfkc_closure
+
+  let default = `Self
+
+  let name = "FcNFKCClosure"
+  let type_name = "[ `Cps of Uucd.cp list | `Self ]"
+end
+
+module FcNFKCClosure = ProcProp(FcNFKCClosureStr)
+let () = FcNFKCClosure.run ()
+
+module FullCompositionExclusionStr = struct
+  let property = Uucd.full_composition_exclusion
+  let name = "FullCompositionExclusion"
+end
+
+module FullCompositionExclusion = ProcBoolProp(FullCompositionExclusionStr)
+let () = FullCompositionExclusion.run ()
+
+module GeneralCategoryStr = struct
+  type t = [ `Cc
+       | `Cf
+       | `Cn
+       | `Co
+       | `Cs
+       | `Ll
+       | `Lm
+       | `Lo
+       | `Lt
+       | `Lu
+       | `Mc
+       | `Me
+       | `Mn
+       | `Nd
+       | `Nl
+       | `No
+       | `Pc
+       | `Pd
+       | `Pe
+       | `Pf
+       | `Pi
+       | `Po
+       | `Ps
+       | `Sc
+       | `Sk
+       | `Sm
+       | `So
+       | `Zl
+       | `Zp
+       | `Zs ]
+
+  let property = Uucd.general_category
+  let default = `Cn
+
+  let name = "GeneralCategory"
+  let type_name = "[ `Cc
+       | `Cf
+       | `Cn
+       | `Co
+       | `Cs
+       | `Ll
+       | `Lm
+       | `Lo
+       | `Lt
+       | `Lu
+       | `Mc
+       | `Me
+       | `Mn
+       | `Nd
+       | `Nl
+       | `No
+       | `Pc
+       | `Pd
+       | `Pe
+       | `Pf
+       | `Pi
+       | `Po
+       | `Ps
+       | `Sc
+       | `Sk
+       | `Sm
+       | `So
+       | `Zl
+       | `Zp
+       | `Zs ]"
+end
+
+module GeneralCategory = ProcProp(GeneralCategoryStr)
+let () = GeneralCategory.run ()
+
+module GraphemeBaseStr = struct
+  let property = Uucd.grapheme_base
+  let name = "GraphemeBase"
+end
+
+module GraphemeBase = ProcBoolProp(GraphemeBaseStr)
+let () = GraphemeBase.run ()
+
+module GraphemeClusterBreakStr = struct
+  type t = [ `CN | `CR | `EX | `L | `LF | `LV | `LVT | `PP | `RI | `SM | `T | `V | `XX ]
+
+  let property = Uucd.grapheme_cluster_break
+  let default = `XX
+
+  let name = "GraphemeClusterBreak"
+  let type_name = "[ `CN | `CR | `EX | `L | `LF | `LV | `LVT | `PP | `RI | `SM | `T | `V | `XX ]"
+end
+
+module GraphemeClusterBreak = ProcProp(GraphemeClusterBreakStr)
+let () = GraphemeClusterBreak.run ()
+
+module GraphemeExtendStr = struct
+  let property = Uucd.grapheme_extend
+  let name = "GraphemeExtend"
+end
+
+module GraphemeExtend = ProcBoolProp(GraphemeExtendStr)
+let () = GraphemeExtend.run ()
+
+module GraphemeLinkStr = struct
+  let property = Uucd.grapheme_link
+  let name = "GraphemeLink"
+end
+
+module GraphemeLink = ProcBoolProp(GraphemeLinkStr)
+let () = GraphemeLink.run ()
+
+module HangulSyllableTypeStr = struct
+  type t = [ `L | `LV | `LVT | `NA | `T | `V ]
+
+  let property = Uucd.hangul_syllable_type
+  let default = `NA
+
+  let name = "HangulSyllableType"
+  let type_name = "[ `L | `LV | `LVT | `NA | `T | `V ]"
+end
+
+module HangulSyllableType = ProcProp(HangulSyllableTypeStr)
+let () = HangulSyllableType.run ()
+
+module HexDigitStr = struct
+  let property = Uucd.hex_digit
+  let name = "HexDigit"
+end
+
+module HexDigit = ProcBoolProp(HexDigitStr)
+let () = HexDigit.run ()
+
+module HyphenStr = struct
+  let property = Uucd.hyphen
+  let name = "Hyphen"
+end
+
+module Hyphen = ProcBoolProp(HyphenStr)
+let () = Hyphen.run ()
+
+module IdContinueStr = struct
+  let property = Uucd.id_continue
+  let name = "IdContinue"
+end
+
+module IdContinue = ProcBoolProp(IdContinueStr)
+let () = IdContinue.run ()
+
+module IdStartStr = struct
+  let property = Uucd.id_start
+  let name = "IdStart"
+end
+
+module IdStart = ProcBoolProp(IdStartStr)
+let () = IdStart.run ()
+
+(*
+val ideographic : bool prop
+val ids_binary_operator : bool prop
+val ids_trinary_operator : bool prop
+*)
