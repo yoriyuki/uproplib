@@ -1301,8 +1301,495 @@ end
 module IdStart = ProcBoolProp(IdStartStr)
 let () = IdStart.run ()
 
-(*
-val ideographic : bool prop
-val ids_binary_operator : bool prop
-val ids_trinary_operator : bool prop
-*)
+module IdeographicStr = struct
+  let property = Uucd.ideographic
+  let name = "Ideographic"
+end
+
+module Ideographic = ProcBoolProp(IdeographicStr)
+let () = Ideographic.run ()
+
+module IdsBinaryOperatorStr = struct
+  let property = Uucd.ids_binary_operator
+  let name = "IdsBinaryOperator"
+end
+
+module IdsBinaryOperator = ProcBoolProp(IdsBinaryOperatorStr)
+let () = IdsBinaryOperator.run ()
+
+module IdsTrinaryOperatorStr = struct
+  let property = Uucd.ids_trinary_operator
+  let name = "IdsTrinaryOperator"
+end
+
+module IdsTrinaryOperator = ProcBoolProp(IdsTrinaryOperatorStr)
+let () = IdsTrinaryOperator.run ()
+
+module IndicSyllabicCategoryStr = struct
+  type t = [ `Avagraha
+       | `Bindu
+       | `Brahmi_Joining_Number
+       | `Cantillation_Mark
+       | `Consonant
+       | `Consonant_Dead
+       | `Consonant_Final
+       | `Consonant_Head_Letter
+       | `Consonant_Medial
+       | `Consonant_Placeholder
+       | `Consonant_Preceding_Repha
+       | `Consonant_Repha
+       | `Consonant_Subjoined
+       | `Consonant_Succeeding_Repha
+       | `Gemination_Mark
+       | `Invisible_Stacker
+       | `Joiner
+       | `Modifying_Letter
+       | `Non_Joiner
+       | `Nukta
+       | `Number
+       | `Number_Joiner
+       | `Other
+       | `Pure_Killer
+       | `Register_Shifter
+       | `Tone_Letter
+       | `Tone_Mark
+       | `Virama
+       | `Visarga
+       | `Vowel
+       | `Vowel_Dependent
+       | `Vowel_Independent ]
+
+  let property = Uucd.indic_syllabic_category
+  let default = `Other
+
+  let name = "IndicSyllabicCategory"
+  let type_name = "[ `Avagraha
+       | `Bindu
+       | `Brahmi_Joining_Number
+       | `Cantillation_Mark
+       | `Consonant
+       | `Consonant_Dead
+       | `Consonant_Final
+       | `Consonant_Head_Letter
+       | `Consonant_Medial
+       | `Consonant_Placeholder
+       | `Consonant_Preceding_Repha
+       | `Consonant_Repha
+       | `Consonant_Subjoined
+       | `Consonant_Succeeding_Repha
+       | `Gemination_Mark
+       | `Invisible_Stacker
+       | `Joiner
+       | `Modifying_Letter
+       | `Non_Joiner
+       | `Nukta
+       | `Number
+       | `Number_Joiner
+       | `Other
+       | `Pure_Killer
+       | `Register_Shifter
+       | `Tone_Letter
+       | `Tone_Mark
+       | `Virama
+       | `Visarga
+       | `Vowel
+       | `Vowel_Dependent
+       | `Vowel_Independent ]"
+end
+
+module IndicSyllabicCategory = ProcProp(IndicSyllabicCategoryStr)
+let () = IndicSyllabicCategory.run ()
+
+module IndicMatraCategoryStr = struct
+  type t = [ `Bottom
+       | `Bottom_And_Right
+       | `Invisible
+       | `Left
+       | `Left_And_Right
+       | `NA
+       | `Overstruck
+       | `Right
+       | `Top
+       | `Top_And_Bottom
+       | `Top_And_Bottom_And_Right
+       | `Top_And_Left
+       | `Top_And_Left_And_Right
+       | `Top_And_Right
+       | `Visual_Order_Left ]
+
+  let property = Uucd.indic_matra_category
+  let default = `NA
+
+  let name = "IndicMatraCategory"
+  let type_name = "[ `Bottom
+       | `Bottom_And_Right
+       | `Invisible
+       | `Left
+       | `Left_And_Right
+       | `NA
+       | `Overstruck
+       | `Right
+       | `Top
+       | `Top_And_Bottom
+       | `Top_And_Bottom_And_Right
+       | `Top_And_Left
+       | `Top_And_Left_And_Right
+       | `Top_And_Right
+       | `Visual_Order_Left ]"
+end
+
+module IndicMatraCategory = ProcProp(IndicMatraCategoryStr)
+let () = IndicMatraCategory.run ()
+
+module IsoCommentStr = struct
+  type t = string
+
+  let property = Uucd.iso_comment
+  let default = ""
+
+  let name = "IsoComment"
+  let type_name = "string"
+end
+
+module IsoComment = ProcProp(IsoCommentStr)
+let () = IsoComment.run ()
+
+module JamoShortNameStr = struct
+  type t = string
+
+  let property = Uucd.jamo_short_name
+  let default = ""
+
+  let name = "JamoShortName"
+  let type_name = "string"
+end
+
+module JamoShortName = ProcProp(JamoShortNameStr)
+let () = JamoShortName.run ()
+
+module JoinControlStr = struct
+  let property = Uucd.join_control
+  let name = "JoinControl"
+end
+
+module JoinControl = ProcBoolProp(JoinControlStr)
+let () = JoinControl.run ()
+
+module JoiningGroupStr = struct
+  type t = [ `Ain
+       | `Alaph
+       | `Alef
+       | `Alef_Maqsurah
+       | `Beh
+       | `Beth
+       | `Burushaski_Yeh_Barree
+       | `Dal
+       | `Dalath_Rish
+       | `E
+       | `Farsi_Yeh
+       | `Fe
+       | `Feh
+       | `Final_Semkath
+       | `Gaf
+       | `Gamal
+       | `Hah
+       | `Hamza_On_Heh_Goal
+       | `He
+       | `Heh
+       | `Heh_Goal
+       | `Heth
+       | `Kaf
+       | `Kaph
+       | `Khaph
+       | `Knotted_Heh
+       | `Lam
+       | `Lamadh
+       | `Manichaean_Aleph
+       | `Manichaean_Ayin
+       | `Manichaean_Beth
+       | `Manichaean_Daleth
+       | `Manichaean_Dhamedh
+       | `Manichaean_Five
+       | `Manichaean_Gimel
+       | `Manichaean_Heth
+       | `Manichaean_Hundred
+       | `Manichaean_Kaph
+       | `Manichaean_Lamedh
+       | `Manichaean_Mem
+       | `Manichaean_Nun
+       | `Manichaean_One
+       | `Manichaean_Pe
+       | `Manichaean_Qoph
+       | `Manichaean_Resh
+       | `Manichaean_Sadhe
+       | `Manichaean_Samekh
+       | `Manichaean_Taw
+       | `Manichaean_Ten
+       | `Manichaean_Teth
+       | `Manichaean_Thamedh
+       | `Manichaean_Twenty
+       | `Manichaean_Waw
+       | `Manichaean_Yodh
+       | `Manichaean_Zayin
+       | `Meem
+       | `Mim
+       | `No_Joining_Group
+       | `Noon
+       | `Nun
+       | `Nya
+       | `Pe
+       | `Qaf
+       | `Qaph
+       | `Reh
+       | `Reversed_Pe
+       | `Rohingya_Yeh
+       | `Sad
+       | `Sadhe
+       | `Seen
+       | `Semkath
+       | `Shin
+       | `Straight_Waw
+       | `Swash_Kaf
+       | `Syriac_Waw
+       | `Tah
+       | `Taw
+       | `Teh_Marbuta
+       | `Teh_Marbuta_Goal
+       | `Teth
+       | `Waw
+       | `Yeh
+       | `Yeh_Barree
+       | `Yeh_With_Tail
+       | `Yudh
+       | `Yudh_He
+       | `Zain
+       | `Zhain ]
+
+  let property = Uucd.joining_group
+  let default = `No_Joining_Group
+
+  let name = "JoiningGroup"
+      let type_name = "[ `Ain
+       | `Alaph
+       | `Alef
+       | `Alef_Maqsurah
+       | `Beh
+       | `Beth
+       | `Burushaski_Yeh_Barree
+       | `Dal
+       | `Dalath_Rish
+       | `E
+       | `Farsi_Yeh
+       | `Fe
+       | `Feh
+       | `Final_Semkath
+       | `Gaf
+       | `Gamal
+       | `Hah
+       | `Hamza_On_Heh_Goal
+       | `He
+       | `Heh
+       | `Heh_Goal
+       | `Heth
+       | `Kaf
+       | `Kaph
+       | `Khaph
+       | `Knotted_Heh
+       | `Lam
+       | `Lamadh
+       | `Manichaean_Aleph
+       | `Manichaean_Ayin
+       | `Manichaean_Beth
+       | `Manichaean_Daleth
+       | `Manichaean_Dhamedh
+       | `Manichaean_Five
+       | `Manichaean_Gimel
+       | `Manichaean_Heth
+       | `Manichaean_Hundred
+       | `Manichaean_Kaph
+       | `Manichaean_Lamedh
+       | `Manichaean_Mem
+       | `Manichaean_Nun
+       | `Manichaean_One
+       | `Manichaean_Pe
+       | `Manichaean_Qoph
+       | `Manichaean_Resh
+       | `Manichaean_Sadhe
+       | `Manichaean_Samekh
+       | `Manichaean_Taw
+       | `Manichaean_Ten
+       | `Manichaean_Teth
+       | `Manichaean_Thamedh
+       | `Manichaean_Twenty
+       | `Manichaean_Waw
+       | `Manichaean_Yodh
+       | `Manichaean_Zayin
+       | `Meem
+       | `Mim
+       | `No_Joining_Group
+       | `Noon
+       | `Nun
+       | `Nya
+       | `Pe
+       | `Qaf
+       | `Qaph
+       | `Reh
+       | `Reversed_Pe
+       | `Rohingya_Yeh
+       | `Sad
+       | `Sadhe
+       | `Seen
+       | `Semkath
+       | `Shin
+       | `Straight_Waw
+       | `Swash_Kaf
+       | `Syriac_Waw
+       | `Tah
+       | `Taw
+       | `Teh_Marbuta
+       | `Teh_Marbuta_Goal
+       | `Teth
+       | `Waw
+       | `Yeh
+       | `Yeh_Barree
+       | `Yeh_With_Tail
+       | `Yudh
+       | `Yudh_He
+       | `Zain
+       | `Zhain ]"
+end
+
+module JoiningGroup = ProcProp(JoiningGroupStr)
+let () = JoiningGroup.run ()
+
+module JoiningTypeStr = struct
+  type t = [ `C | `D | `L | `R | `T | `U ]
+
+  let property = Uucd.joining_type
+  let default = `U
+
+  let name = "JoiningType"
+  let type_name = "[ `C | `D | `L | `R | `T | `U | `Non_Joining]"
+end
+
+module JoiningType = ProcProp(JoiningTypeStr)
+let () = JoiningType.run ()
+
+module LineBreakStr = struct
+  type t = [ `AI
+       | `AL
+       | `B2
+       | `BA
+       | `BB
+       | `BK
+       | `CB
+       | `CJ
+       | `CL
+       | `CM
+       | `CP
+       | `CR
+       | `EX
+       | `GL
+       | `H2
+       | `H3
+       | `HL
+       | `HY
+       | `ID
+       | `IN
+       | `IS
+       | `JL
+       | `JT
+       | `JV
+       | `LF
+       | `NL
+       | `NS
+       | `NU
+       | `OP
+       | `PO
+       | `PR
+       | `QU
+       | `RI
+       | `SA
+       | `SG
+       | `SP
+       | `SY
+       | `WJ
+       | `XX
+       | `ZW ]
+
+  let property = Uucd.line_break
+  let default = `XX
+
+  let name = "LineBreak"
+  let type_name =  "[ `AI
+       | `AL
+       | `B2
+       | `BA
+       | `BB
+       | `BK
+       | `CB
+       | `CJ
+       | `CL
+       | `CM
+       | `CP
+       | `CR
+       | `EX
+       | `GL
+       | `H2
+       | `H3
+       | `HL
+       | `HY
+       | `ID
+       | `IN
+       | `IS
+       | `JL
+       | `JT
+       | `JV
+       | `LF
+       | `NL
+       | `NS
+       | `NU
+       | `OP
+       | `PO
+       | `PR
+       | `QU
+       | `RI
+       | `SA
+       | `SG
+       | `SP
+       | `SY
+       | `WJ
+       | `XX
+       | `ZW ]"
+end
+
+module LineBreak = ProcProp(LineBreakStr)
+let () = LineBreak.run ()
+
+module LogicalOrderExceptionStr = struct
+  let property = Uucd.logical_order_exception
+  let name = "LogicalOrderException"
+end
+
+module LogicalOrderException = ProcBoolProp(LogicalOrderExceptionStr)
+let () = LogicalOrderException.run ()
+
+module LowercaseStr = struct
+  let property = Uucd.lowercase
+  let name = "Lowercase"
+end
+
+module Lowercase = ProcBoolProp(LowercaseStr)
+let () = Lowercase.run ()
+
+module LowercaseMappingStr = struct 
+  type t = [ `Cps of int list | `Self ]
+  let property = Uucd.lowercase_mapping
+  let default = `Self
+  let name = "LowercaseMapping"
+  let type_name = "[ `Cps of int list | `Self ]"
+end
+
+module LowercaseMapping = ProcProp(LowercaseMappingStr)
+let () = LowercaseMapping.run ()
+
