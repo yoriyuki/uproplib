@@ -73,8 +73,54 @@ all : byte $(OCAMLBEST)
 
 PROPSINT = props/uPropAge.mli props/uPropAlphabetic.mli props/uPropAsciiHexDigit.mli \
 	props/uPropBidiClass.mli props/uPropBidiControl.mli props/uPropBidiMirrored.mli \
-	Props/uPropBidiMirroringGlyph.mli Props/uPropBidiPairedBracket.mli \
-	Props/uPropBidiPairedBracketType.mli Props/uPropBlock.mli
+	props/uPropBidiMirroringGlyph.mli props/uPropBidiPairedBracket.mli \
+	props/uPropBidiPairedBracketType.mli props/uPropBlock.mli \
+	props/uPropCanonicalCombiningClass.mli props/uPropCased.mli \
+	props/uPropCaseFolding.mli props/uPropCaseIgnorable.mli \
+	props/uPropChangesWhenCasefolded.mli props/uPropChangesWhenCasemapped.mli \
+	props/uPropChangesWhenLowercased.mli props/uPropChangesWhenNfkcCasefolded.mli \
+	props/uPropChangesWhenTitlecased.mli props/uPropChangesWhenUppercased.mli \
+	props/uPropCompositionExclusion.mli props/uPropDash.mli \
+	props/uPropDecompositionMapping.mli props/uPropDecompositionType.mli \
+	props/uPropDefaultIgnorableCodePoint.mli props/uPropDeprecated.mli \
+	props/uPropDiacritic.mli props/uPropEastAsianWidth.mli \
+	props/uPropExpandsOnNFC.mli props/uPropExpandsOnNFD.mli \
+	props/uPropExpandsOnNFKC.mli props/uPropExpandsOnNFKD.mli \
+	props/uPropExtender.mli props/uPropFcNFKCClosure.mli \
+	props/uPropFullCompositionExclusion.mli props/uPropGeneralCategory.mli \
+	props/uPropGraphemeBase.mli props/uPropGraphemeClusterBreak.mli \
+	props/uPropGraphemeExtend.mli props/uPropGraphemeLink.mli \
+	props/uPropHangulSyllableType.mli props/uPropHexDigit.mli \
+	props/uPropHyphen.mli props/uPropIdContinue.mli \
+	props/uPropIdStart.mli props/uPropIdeographic.mli \
+	props/uPropIdsBinaryOperator.mli props/uPropIdsTrinaryOperator.mli \
+	props/uPropIndicSyllabicCategory.mli props/uPropIndicMatraCategory.mli \
+	props/uPropIsoComment.mli props/uPropJamoShortName.mli \
+	props/uPropJoinControl.mli props/uPropJoiningGroup.mli \
+	props/uPropJoiningType.mli props/uPropLineBreak.mli \
+	props/uPropLogicalOrderException.mli props/uPropLowercase.mli \
+	props/uPropLowercaseMapping.mli props/uPropMath.mli \
+	props/uPropName.mli props/uPropNameAliases.mli \
+	props/uPropNFCQuickCheck.mli props/uPropNFDQuickCheck.mli \
+	props/uPropNFKCQuickCheck.mli props/uPropNFKDQuickCheck.mli \
+	props/uPropNFKCCasefold.mli props/uPropNoncharacterCodePoint.mli \
+	props/uPropNumericType.mli props/uPropNumericValue.mli \
+	props/uPropOtherAlphabetic.mli props/uPropOtherDefaultIgnorableCodePoint.mli \
+	props/uPropOtherGraphemeExtend.mli props/uPropOtherIdContinue.mli \
+	props/uPropOtherIdStart.mli props/uPropOtherLowercase.mli \
+	props/uPropOtherMath.mli props/uPropOtherUppercase.mli \
+	props/uPropPatternSyntax.mli props/uPropPatternWhiteSpace.mli \
+	props/uPropQuotationMark.mli props/uPropRadical.mli \
+	props/uPropScript.mli props/uPropScriptExtensions.mli \
+	props/uPropSentenceBreak.mli props/uPropSimpleCaseFolding.mli \
+	props/uPropSimpleLowercaseMapping.mli props/uPropSimpleTitlecaseMapping.mli \
+	props/uPropSimpleUppercaseMapping.mli props/uPropSoftDotted.mli \
+	props/uPropSterm.mli props/uPropTerminalPunctuation.mli \
+	props/uPropTitlecaseMapping.mli props/uPropUnicode1Name.mli \
+	props/uPropUnifiedIdeograph.mli props/uPropUppercase.mli \
+	props/uPropUppercaseMapping.mli props/uPropVariationSelector.mli \
+	props/uPropWhiteSpace.mli props/uPropWordBreak.mli \
+	props/uPropXidContinue.mli props/uPropXidStart.mli
 
 # Build the library
 ###################
@@ -114,7 +160,7 @@ $(PROPSINT) $(PROPSINT:.mli=.ml) : tools/ucdCompiler.$(OCAMLBEST)
 # Installation and export
 ###################################################################
 
-install: install-with-ocamlfind install-data
+install: install-with-ocamlfind
 
 install-with-ocamlfind:
 	ocamlfind install uproplib META $(PROPSINT) $(PROPSINT:.mli=.cmx) uproplib.cma uproplib.cmxa uproplib.a
